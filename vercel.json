@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "name": "apprendre-francais",
+  "builds": [
+    { "src": "**/*.html", "use": "@vercel/static" }
+  ]
+}
