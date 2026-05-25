@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecon du Jour — Au Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;600&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6EF;
+    --dark: #1C1B18;
+    --burgundy: #8B2233;
+    --gold: #B8934A;
+    --light-gold: #EDD9A3;
+    --card: #FFFFFF;
+    --muted: #6B6358;
+    --highlight: #FFF3C4;
+    --green: #1a6b3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--dark); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+
+  .header { background: var(--dark); padding: 22px 32px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--gold); }
+  .subtitle { font-family: 'Crimson Pro', serif; font-size: 12px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--cream); font-weight: 700; }
+  .badges { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; }
+  .badge.level { background: var(--burgundy); color: white; }
+  .badge.topic { background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: 'Crimson Pro', serif; font-weight: 400; }
+
+  .main { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--burgundy); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--light-gold); }
+  .divider { height: 1px; background: var(--light-gold); margin: 28px 0; }
+
+  /* Dialogue */
+  .dialogue-sub { font-size: 13px; color: var(--muted); font-family: 'Crimson Pro', serif; margin-bottom: 18px; }
+  .exchange { display: flex; flex-direction: column; gap: 14px; }
+  .bubble-wrap { display: flex; flex-direction: column; gap: 5px; }
+  .bubble-meta { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: var(--muted); padding: 0 14px; }
+  .bubble { border-radius: 4px 16px 16px 16px; padding: 14px 18px; border-left: 3px solid var(--burgundy); background: #EDF1F9; }
+  .bubble.server { border-left-color: var(--gold); background: #F0EAE2; }
+  .bubble-french { font-family: 'Playfair Display', serif; font-size: 17px; line-height: 1.7; margin-bottom: 6px; }
+  .bubble-korean { font-size: 13px; color: var(--muted); font-weight: 300; }
+  .bubble-pron { font-size: 12px; color: var(--burgundy); font-family: 'Crimson Pro', serif; margin-top: 3px; }
+  .click-hint { text-align: center; font-size: 12px; color: var(--muted); margin-top: 10px; font-family: 'Crimson Pro', serif; }
+
+  .word { cursor: pointer; border-bottom: 2px dotted var(--gold); padding-bottom: 1px; transition: background 0.15s; display: inline; border-radius: 2px; }
+  .word:hover, .word.active { background: var(--highlight); color: var(--burgundy); }
+
+  .tooltip { display: none; position: fixed; background: var(--dark); color: var(--cream); border-radius: 8px; padding: 14px 16px; width: 280px; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.35); pointer-events: none; border-top: 3px solid var(--gold); }
+  .tooltip.visible { display: block; }
+  .tip-word { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--light-gold); margin-bottom: 2px; }
+  .tip-pron { font-family: 'Crimson Pro', serif; font-size: 13px; color: var(--gold); margin-bottom: 8px; }
+  .tip-kr { font-size: 15px; font-weight: 500; margin-bottom: 7px; }
+  .tip-grammar { font-size: 12px; color: #BBB; padding: 4px 8px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-bottom: 7px; }
+  .tip-memo { font-size: 12px; color: var(--light-gold); }
+  .tip-memo::before { content: '💡 '; }
+
+  /* Grammar */
+  .grammar-card { background: var(--card); border: 1px solid var(--light-gold); border-radius: 6px; padding: 20px; margin-bottom: 14px; }
+  .grammar-title { font-family: 'Playfair Display', serif; font-size: 15px; margin-bottom: 10px; color: var(--burgundy); }
+  .grammar-body { font-size: 14px; line-height: 1.8; }
+  .fr { font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  .article-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .article-box { background: #F5F0E8; border-radius: 5px; padding: 10px 12px; text-align: center; }
+  .article-box .a-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .article-box .a-word { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--burgundy); font-weight: 700; }
+  .article-box .a-ex { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .compare-row { display: flex; gap: 12px; align-items: baseline; margin: 6px 0; font-size: 13px; }
+  .compare-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); min-width: 60px; }
+  .wrong { color: #c0392b; text-decoration: line-through; font-family: 'Playfair Display', serif; font-weight: 700; }
+  .right { color: var(--green); font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  /* Menu card */
+  .menu-card { background: var(--dark); color: var(--cream); border-radius: 8px; padding: 24px 28px; margin-bottom: 4px; }
+  .menu-title { font-family: 'Playfair Display', serif; font-size: 18px; text-align: center; color: var(--gold); margin-bottom: 4px; }
+  .menu-sub { text-align: center; font-size: 11px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+  .menu-section { margin-bottom: 14px; }
+  .menu-section-title { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid #333; padding-bottom: 4px; margin-bottom: 10px; }
+  .menu-item { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; font-size: 13px; }
+  .menu-item-name { font-family: 'Playfair Display', serif; font-size: 14px; }
+  .menu-item-desc { font-size: 11px; color: #888; margin-top: 1px; }
+  .menu-item-price { color: var(--light-gold); font-weight: 600; font-size: 13px; }
+
+  /* Vocab grid */
+  .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+  .vocab-item { background: var(--card); border: 1px solid #E8E0D4; border-radius: 5px; padding: 10px 14px; }
+  .vocab-fr { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; }
+  .vocab-pron { font-size: 11px; color: var(--burgundy); font-family: 'Crimson Pro', serif; }
+  .vocab-kr { font-size: 12px; color: var(--muted); font-weight: 300; margin-top: 1px; }
+
+  /* Expression */
+  .expr-box { background: var(--burgundy); color: white; border-radius: 6px; padding: 22px 24px; }
+  .expr-main { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; }
+  .expr-pron { font-family: 'Crimson Pro', serif; font-size: 14px; color: var(--light-gold); margin-bottom: 12px; }
+  .expr-meaning { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.7; }
+  .expr-usage { margin-top: 12px; font-size: 12px; color: var(--light-gold); line-height: 1.7; }
+
+  /* Quiz */
+  .quiz-item { background: var(--card); border: 1px solid #E8E0D4; border-left: 3px solid var(--gold); border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.6; }
+  .quiz-q { font-weight: 500; margin-bottom: 4px; }
+  .quiz-hint { color: var(--muted); font-size: 12px; }
+  .answer-toggle { margin-top: 10px; font-size: 12px; color: var(--burgundy); cursor: pointer; font-weight: 600; user-select: none; display: inline-block; }
+  .answer-text { display: none; margin-top: 8px; font-family: 'Playfair Display', serif; font-size: 15px; color: var(--green); padding: 8px 10px; background: #F0F7F2; border-radius: 4px; }
+
+  .culture-note { border-top: 1px dashed var(--light-gold); margin-top: 24px; padding-top: 16px; font-size: 13px; color: var(--muted); font-family: 'Crimson Pro', serif; line-height: 1.8; }
+  .culture-note strong { color: var(--dark); }
+
+  .back-link { display: inline-block; margin-bottom: 24px; font-size: 13px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back-link:hover { color: var(--burgundy); }
+
+  @media (max-width: 480px) {
+    .vocab-grid { grid-template-columns: 1fr; }
+    .article-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .badges { flex-direction: row; }
+    .tooltip { width: 240px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="subtitle">Apprendre le Francais</div>
+    <h1>Lecon du Jour</h1>
+  </div>
+  <div class="badges">
+    <span class="badge level">A1-A2 · 일상 회화</span>
+    <span class="badge topic">Au restaurant</span>
+  </div>
+</div>
+
+<div class="main">
+  <a class="back-link" href="../index.html">← 목록으로</a>
+
+  <!-- Dialogue -->
+  <div class="section-label">대화 (Dialogue)</div>
+  <div class="dialogue-sub">레스토랑에서 주문하기 — 밑줄 친 단어를 클릭하면 분석 팝업이 나와요</div>
+
+  <div class="exchange">
+    <div class="bubble-wrap">
+      <div class="bubble-meta">👨 종업원 (Serveur)</div>
+      <div class="bubble server">
+        <div class="bubble-french">
+          <span class="word" data-key="Bonsoir">Bonsoir</span>&nbsp;!&nbsp;<span class="word" data-key="Vous">Vous</span>&nbsp;<span class="word" data-key="avez">avez</span>&nbsp;<span class="word" data-key="reserve">reserve</span>&nbsp;?
+        </div>
+        <div class="bubble-korean">안녕하세요! 예약하셨나요?</div>
+        <div class="bubble-pron">봉수아르! 부 자베 헤제흐베?</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-meta">🧑 손님 (Client)</div>
+      <div class="bubble">
+        <div class="bubble-french">
+          <span class="word" data-key="Non">Non</span>,&nbsp;<span class="word" data-key="nous">nous</span>&nbsp;<span class="word" data-key="navons">n'avons</span>&nbsp;<span class="word" data-key="pas">pas</span>&nbsp;<span class="word" data-key="reserve">reserve</span>.&nbsp;<span class="word" data-key="Cest">C'est</span>&nbsp;<span class="word" data-key="pour">pour</span>&nbsp;<span class="word" data-key="deux">deux</span>&nbsp;<span class="word" data-key="personnes">personnes</span>.
+        </div>
+        <div class="bubble-korean">아니요, 예약을 안 했어요. 두 명이에요.</div>
+        <div class="bubble-pron">농, 누 나봉 파 헤제흐베. 쎄 뿌흐 두 페흐손.</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-meta">👨 종업원 (Serveur)</div>
+      <div class="bubble server">
+        <div class="bubble-french">
+          <span class="word" data-key="Bien">Bien</span>&nbsp;<span class="word" data-key="sur">sur</span>&nbsp;!&nbsp;
+          <span class="word" data-key="Voici">Voici</span>&nbsp;<span class="word" data-key="la2">la</span>&nbsp;<span class="word" data-key="carte">carte</span>.
+        </div>
+        <div class="bubble-korean">물론이죠! 메뉴판 여기 있습니다.</div>
+        <div class="bubble-pron">비엥 쒸흐! 부아씨 라 카흐트.</div>
+      </div>
+    </div>
+
+    <div class="bubble-wrap">
+      <div class="bubble-meta">🧑 손님 (Client)</div>
+      <div class="bubble">
+        <div class="bubble-french">
+          <span class="word" data-key="Je">Je</span>&nbsp;<span class="word" data-key="voudrais">voudrais</span>&nbsp;<span class="word" data-key="du">du</span>&nbsp;<span class="word" data-key="boeuf">boeuf</span>&nbsp;
+          <span class="word" data-key="et">et</span>&nbsp;<span class="word" data-key="de">de</span>&nbsp;<span class="word" data-key="la">la</span>&nbsp;<span class="word" data-key="soupe">soupe</span>&nbsp;<span class="word" data-key="sil">s'il</span>&nbsp;<span class="word" data-key="vous">vous</span>&nbsp;<span class="word" data-key="plait">plait</span>.
+        </div>
+        <div class="bubble-korean">소고기와 수프 주세요.</div>
+        <div class="bubble-pron">주 부드헤 뒤 뵈프 에 드 라 숩, 실 부 플레.</div>
+      </div>
+    </div>
+  </div>
+  <div class="click-hint">☝ 단어를 클릭해보세요</div>
+
+  <div class="divider"></div>
+
+  <!-- Menu card -->
+  <div class="section-label">메뉴판 읽기 (La carte)</div>
+  <div class="menu-card">
+    <div class="menu-title">Le Petit Bistrot</div>
+    <div class="menu-sub">Paris, 6e arrondissement</div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Entrees (전채)</div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Soupe a l'oignon</div>
+          <div class="menu-item-desc">양파 수프 — 프랑스 전통</div>
+        </div>
+        <div class="menu-item-price">8€</div>
+      </div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Salade verte</div>
+          <div class="menu-item-desc">그린 샐러드</div>
+        </div>
+        <div class="menu-item-price">6€</div>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Plats principaux (메인)</div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Boeuf bourguignon</div>
+          <div class="menu-item-desc">부르고뉴식 소고기 찜</div>
+        </div>
+        <div class="menu-item-price">22€</div>
+      </div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Poulet roti</div>
+          <div class="menu-item-desc">구운 닭고기</div>
+        </div>
+        <div class="menu-item-price">18€</div>
+      </div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Poisson du jour</div>
+          <div class="menu-item-desc">오늘의 생선 요리</div>
+        </div>
+        <div class="menu-item-price">20€</div>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-title">Desserts</div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Creme brulee</div>
+          <div class="menu-item-desc">크렘 브륄레</div>
+        </div>
+        <div class="menu-item-price">7€</div>
+      </div>
+      <div class="menu-item">
+        <div>
+          <div class="menu-item-name">Tarte aux pommes</div>
+          <div class="menu-item-desc">애플 타르트</div>
+        </div>
+        <div class="menu-item-price">6€</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Grammar: Partitif -->
+  <div class="section-label">문법 포인트</div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">1. 부분관사 (Article partitif) — 오늘 핵심</div>
+    <div class="grammar-body">
+      카페 레슨에서 배운 un/une는 "하나"를 셀 때 써. 근데 음식, 물, 돈처럼 <strong>양으로 표현할 때</strong>는 다른 관사를 써 — 부분관사.
+      <br><br>
+      <div class="article-grid">
+        <div class="article-box">
+          <div class="a-label">남성</div>
+          <div class="a-word">du</div>
+          <div class="a-ex">du boeuf (소고기)<br>du pain (빵)<br>du vin (와인)</div>
+        </div>
+        <div class="article-box">
+          <div class="a-label">여성</div>
+          <div class="a-word">de la</div>
+          <div class="a-ex">de la soupe (수프)<br>de la viande (고기)<br>de la eau → de l'eau</div>
+        </div>
+        <div class="article-box">
+          <div class="a-label">모음 앞</div>
+          <div class="a-word">de l'</div>
+          <div class="a-ex">de l'eau (물)<br>de l'huile (기름)<br>de l'argent (돈)</div>
+        </div>
+      </div>
+      <br>
+      한국어로 번역하면 "좀", "약간의" 뜻이지만 실제로는 안 쓰고 그냥 "소고기를", "수프를" 이렇게 번역해.
+    </div>
+  </div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">2. Passe compose — 과거형 완전 정복</div>
+    <div class="grammar-body">
+      오늘 대화에서 나온 <span class="fr">vous avez reserve</span> (예약하셨나요?) — 이게 passe compose야.<br><br>
+      <strong>구조: avoir/etre + 과거분사</strong><br><br>
+
+      avoir 현재형 먼저:
+      <div style="background: #F5F0E8; border-radius: 5px; padding: 12px 14px; margin: 10px 0; font-size: 13px; line-height: 2;">
+        j'ai [제] — tu as [튀 아] — il/elle a [일 아]<br>
+        nous avons [누 자봉] — vous avez [부 자베] — ils ont [일 종]
+      </div>
+
+      동사 과거분사 만들기:
+      <div class="compare-row"><span class="compare-label">-er 동사</span><span><span class="fr">reserver</span> → <span class="right">reserve</span></span></div>
+      <div class="compare-row"><span class="compare-label">-ir 동사</span><span><span class="fr">finir</span> → <span class="right">fini</span></span></div>
+      <div class="compare-row"><span class="compare-label">불규칙</span><span><span class="fr">avoir</span> → <span class="right">eu</span>, <span class="fr">etre</span> → <span class="right">ete</span></span></div>
+      <br>
+      오늘은 <span class="fr">avoir + -er 동사</span> 패턴만 외우면 충분해.
+    </div>
+  </div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">3. 부정문에서 du/de la → de 로 바뀜</div>
+    <div class="grammar-body">
+      긍정문에서는 부분관사 du/de la를 쓰지만, 부정문에서는 모두 <span class="fr">de (d')</span>로 바뀌어.
+      <br><br>
+      <div class="compare-row"><span class="compare-label">긍정</span><span><span class="right">Je voudrais du boeuf.</span></span></div>
+      <div class="compare-row"><span class="compare-label">부정</span><span><span class="right">Je ne voudrais pas de boeuf.</span></span></div>
+      <br>
+      <div class="compare-row"><span class="compare-label">긍정</span><span><span class="right">Il boit de la soupe.</span></span></div>
+      <div class="compare-row"><span class="compare-label">부정</span><span><span class="right">Il ne boit pas de soupe.</span></span></div>
+      <br>
+      규칙: 부정 + du/de la/de l' = 전부 그냥 <span class="fr">de</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Vocab -->
+  <div class="section-label">레스토랑 어휘</div>
+  <div class="vocab-grid">
+    <div class="vocab-item">
+      <div class="vocab-fr">la carte</div>
+      <div class="vocab-pron">[라 카흐트]</div>
+      <div class="vocab-kr">메뉴판</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le plat</div>
+      <div class="vocab-pron">[르 플라]</div>
+      <div class="vocab-kr">요리, 메인 디시</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">l'entree</div>
+      <div class="vocab-pron">[렁트헤]</div>
+      <div class="vocab-kr">전채 요리 (appetizer)</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le dessert</div>
+      <div class="vocab-pron">[르 데제흐]</div>
+      <div class="vocab-kr">디저트</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">l'addition</div>
+      <div class="vocab-pron">[라디씨옹]</div>
+      <div class="vocab-kr">계산서</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le pourboire</div>
+      <div class="vocab-pron">[르 뿌흐부아흐]</div>
+      <div class="vocab-kr">팁</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le boeuf</div>
+      <div class="vocab-pron">[르 뵈프]</div>
+      <div class="vocab-kr">소고기</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le poulet</div>
+      <div class="vocab-pron">[르 뿔레]</div>
+      <div class="vocab-kr">닭고기</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Expression -->
+  <div class="section-label">오늘의 표현</div>
+  <div class="expr-box">
+    <div class="expr-main">L'addition, s'il vous plait !</div>
+    <div class="expr-pron">[라디씨옹, 실 부 플레]</div>
+    <div class="expr-meaning">
+      계산서 주세요!<br><br>
+      프랑스 레스토랑에서 계산서는 직접 불러야 해 — 한국처럼 알아서 안 가져다줌.
+    </div>
+    <div class="expr-usage">
+      같은 표현: "On peut avoir l'addition ?" [옹 뻬 아부아흐 라디씨옹] (계산서 받을 수 있을까요?)<br>
+      더 격식체: "Pourriez-vous nous apporter l'addition ?" (B1 수준)
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Quiz -->
+  <div class="section-label">미니 퀴즈</div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">1. "Je voudrais du poulet et de la soupe"를 한국어로?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">닭고기와 수프 주세요.</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">2. "Je ne voudrais pas ___ boeuf" — 빈칸에 들어갈 말은?</div>
+    <div class="quiz-hint">힌트: 부정문에서 du/de la는 어떻게 바뀌지?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">de — Je ne voudrais pas de boeuf. (부정문에서 du → de)</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">3. "Vous avez reserve ?"를 한국어로? 그리고 무슨 시제야?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">예약하셨나요? — Passe compose (avoir + 과거분사 reserve)</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">4. "포도주 주세요"를 프랑스어로? (le vin = 와인/포도주, 남성)</div>
+    <div class="quiz-hint">힌트: 양으로 표현 → 부분관사. vin은 남성.</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">Je voudrais du vin, s'il vous plait.</div>
+  </div>
+
+  <div class="culture-note">
+    🍽 <strong>문화 포인트</strong> — 프랑스 레스토랑은 한국과 다르게 세 코스가 기본이야: entree (전채) → plat (메인) → dessert. 팁(pourboire)은 의무가 아니지만 계산서의 5~10% 정도 남기면 예의 바른 거야. 그리고 "Bon appetit !" [보나페티] 는 식사 전에 하는 말로, 영어권에서도 그대로 쓸 만큼 유명한 표현이야.
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tip-word" id="tw"></div>
+  <div class="tip-pron" id="tp"></div>
+  <div class="tip-kr" id="tk"></div>
+  <div class="tip-grammar" id="tg"></div>
+  <div class="tip-memo" id="tm"></div>
+</div>
+
+<script>
+const data = {
+  Bonsoir: { pron:'[봉수아흐] / [bɔ̃swaʁ]', kr:'안녕하세요 (저녁)', grammar:'인사말 — 저녁 인사', memo:'Bonjour(낮) vs Bonsoir(저녁). 해 지면 bonsoir로 바뀜' },
+  Vous: { pron:'[부] / [vu]', kr:'당신 (격식)', grammar:'2인칭 복수 / 격식 단수 대명사', memo:'레스토랑 직원에게는 항상 vous. tu는 친한 사이에서만' },
+  avez: { pron:'[아베] / [ave]', kr:'가지고 있다 (have)', grammar:'avoir 동사 2인칭 복수 현재', memo:'avoir 활용: j\'ai, tu as, il a, nous avons, vous avez, ils ont' },
+  reserve: { pron:'[헤제흐베] / [ʁezɛʁve]', kr:'예약했다', grammar:'reserver 동사의 과거분사 (passe compose에서 사용)', memo:'reserver(예약하다) → 과거분사 reserve (-er → -e). 영어 reserve와 동일' },
+  Non: { pron:'[농] / [nɔ̃]', kr:'아니요', grammar:'부정 대답', memo:'Oui [위] = 네, Non [농] = 아니요. "n"은 비음' },
+  nous: { pron:'[누] / [nu]', kr:'우리', grammar:'1인칭 복수 주격 대명사', memo:'je(나) → nous(우리). 동사 활용이 달라짐: je voudrais → nous voudrions' },
+  navons: { pron:'[나봉] / [navɔ̃]', kr:'가지고 있지 않다', grammar:'ne + avons = n\'avons (부정 축약)', memo:'모음 앞에서 ne → n\' 으로 축약. n\'avons pas = have not' },
+  pas: { pron:'[파] / [pa]', kr:'(부정어)', grammar:'부정 구조 ne...pas의 두 번째 요소', memo:'ne(n\')...pas 사이에 동사가 들어감: Je ne suis pas... / Je n\'ai pas...' },
+  Cest: { pron:'[쎄] / [sɛ]', kr:'그것은 ~이다', grammar:'ce + est 축약', memo:'C\'est pour deux = "두 명을 위한 것입니다" → 인원 말할 때' },
+  pour: { pron:'[뿌흐] / [puʁ]', kr:'~을 위해 / ~에 대해', grammar:'전치사', memo:'pour + 숫자 + personnes = N명으로 예약/좌석 요청' },
+  deux: { pron:'[두] / [dø]', kr:'둘, 2', grammar:'기수사', memo:'un(1), deux(2), trois(3), quatre(4), cinq(5)... x 발음 안 함' },
+  personnes: { pron:'[페흐손] / [pɛʁsɔn]', kr:'명, 사람들', grammar:'여성 명사 복수', memo:'une personne(한 명) → deux personnes(두 명). 영어 person과 동일 어원' },
+  Bien: { pron:'[비엥] / [bjɛ̃]', kr:'좋아요, 잘', grammar:'부사', memo:'"bien sur" = "물론이죠" (of course). 매우 자주 쓰이는 표현' },
+  sur: { pron:'[쒸흐] / [syʁ]', kr:'확실한, 위에', grammar:'형용사 / 전치사', memo:'"bien sur" = 당연히, 물론. "sur" 단독으로는 "~위에" 전치사' },
+  Voici: { pron:'[부아씨] / [vwasi]', kr:'여기 있습니다 (here is)', grammar:'제시 표현', memo:'Voici(여기) vs Voila(저기/그게 바로). 뭔가 건네줄 때 사용' },
+  la2: { pron:'[라] / [la]', kr:'그 (the)', grammar:'여성 정관사', memo:'carte가 여성 명사라서 la carte' },
+  carte: { pron:'[카흐트] / [kaʁt]', kr:'메뉴판, 카드, 지도', grammar:'여성 명사', memo:'la carte = 메뉴판. 참고: le menu = 세트 메뉴. carte blanche = 전권 위임' },
+  Je: { pron:'[주] / [ʒə]', kr:'나', grammar:'1인칭 단수 주격 대명사', memo:'항상 동사와 함께' },
+  voudrais: { pron:'[부드헤] / [vudʁɛ]', kr:'원할 텐데요', grammar:'vouloir 조건법 1인칭 단수', memo:'카페/레스토랑 주문의 기본. je veux보다 훨씬 정중' },
+  du: { pron:'[뒤] / [dy]', kr:'(남성 부분관사)', grammar:'de + le 축약. 부분관사 남성형', memo:'셀 수 없는 양 표현: du boeuf, du pain, du vin. 부정문에서는 de로 변함' },
+  boeuf: { pron:'[뵈프] / [bœf]', kr:'소고기 / 소', grammar:'남성 명사', memo:'주의: 발음이 "부프"가 아니라 "뵈프". [œ]는 한국어에 없는 모음' },
+  et: { pron:'[에] / [e]', kr:'그리고', grammar:'접속사', memo:'t는 묵음. "et cetera"의 그 et' },
+  de: { pron:'[드] / [də]', kr:'~의, (부분관사)', grammar:'전치사 / 부분관사 여성형의 일부', memo:'de la soupe에서 de la가 묶여서 부분관사. de 단독으로는 "~의"' },
+  la: { pron:'[라] / [la]', kr:'그 (the) / 부분관사 여성', grammar:'여성 정관사 / de la의 일부', memo:'de la = 여성 부분관사. soupe는 여성 명사' },
+  soupe: { pron:'[숩] / [sup]', kr:'수프', grammar:'여성 명사', memo:'영어 soup와 동일 어원. 끝 -e 묵음' },
+  sil: { pron:'[실] / [sil]', kr:'만약 그것이', grammar:'si + il 축약', memo:'s\'il vous plait = please. 모음 앞에서 si → s\'' },
+  vous: { pron:'[부] / [vu]', kr:'당신', grammar:'2인칭 복수/격식 대명사', memo:'s\'il vous plait에서의 vous. 친한 사이엔 s\'il te plait' },
+  plait: { pron:'[플레] / [plɛ]', kr:'기쁘게 하다', grammar:'plaire 3인칭 단수 현재', memo:'"당신을 기쁘게 한다면" → please' }
+};
+
+const tip = document.getElementById('tooltip');
+
+function showTip(el, key) {
+  const d = data[key]; if (!d) return;
+  document.getElementById('tw').textContent = el.textContent.trim();
+  document.getElementById('tp').textContent = d.pron;
+  document.getElementById('tk').textContent = d.kr;
+  document.getElementById('tg').textContent = d.grammar;
+  document.getElementById('tm').textContent = d.memo;
+  const r = el.getBoundingClientRect();
+  let top = r.bottom + 8 + window.scrollY;
+  let left = r.left + window.scrollX;
+  if (left + 286 > window.innerWidth - 8) left = window.innerWidth - 294;
+  if (top + 200 > window.scrollY + window.innerHeight) top = r.top + window.scrollY - 210;
+  tip.style.top = Math.max(8, top) + 'px';
+  tip.style.left = Math.max(8, left) + 'px';
+  tip.classList.add('visible');
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+  el.classList.add('active');
+}
+
+document.querySelectorAll('.word').forEach(el => {
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    if (el.classList.contains('active') && tip.classList.contains('visible')) {
+      tip.classList.remove('visible');
+      el.classList.remove('active');
+    } else {
+      showTip(el, el.dataset.key);
+    }
+  });
+});
+
+document.addEventListener('click', () => {
+  tip.classList.remove('visible');
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+});
+
+function toggle(btn) {
+  const ans = btn.nextElementSibling;
+  const open = ans.style.display === 'block';
+  ans.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? '▶ 정답 보기' : '▼ 정답 숨기기';
+}
+</script>
+</body>
+</html>
