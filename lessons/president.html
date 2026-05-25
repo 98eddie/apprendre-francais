@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecon du Jour — Actualites</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;600&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6EF;
+    --dark: #1C1B18;
+    --burgundy: #8B2233;
+    --gold: #B8934A;
+    --light-gold: #EDD9A3;
+    --card: #FFFFFF;
+    --muted: #6B6358;
+    --highlight: #FFF3C4;
+    --green: #1a6b3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--dark); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+
+  .header {
+    background: var(--dark);
+    padding: 22px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 3px solid var(--gold);
+  }
+  .subtitle { font-family: 'Crimson Pro', serif; font-size: 12px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--cream); font-weight: 700; }
+  .badges { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; }
+  .badge.level { background: var(--burgundy); color: white; }
+  .badge.topic { background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: 'Crimson Pro', serif; font-weight: 400; }
+
+  .main { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--burgundy);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--light-gold); }
+  .divider { height: 1px; background: var(--light-gold); margin: 28px 0; }
+
+  /* Sentence display */
+  .sentence-card {
+    background: var(--dark);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--gold);
+  }
+  .sentence-fr {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--cream);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .sentence-kr { font-size: 14px; color: #AAA; font-weight: 300; margin-bottom: 8px; }
+  .sentence-pron { font-size: 13px; color: var(--gold); font-family: 'Crimson Pro', serif; }
+
+  .click-hint { text-align: center; font-size: 12px; color: var(--muted); margin: 8px 0 24px; font-family: 'Crimson Pro', serif; }
+
+  /* Word analysis table */
+  .word-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 13px; }
+  .word-table th {
+    text-align: left; padding: 8px 12px;
+    font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted);
+    border-bottom: 2px solid var(--light-gold);
+    background: #F5F0E8;
+  }
+  .word-table td { padding: 10px 12px; border-bottom: 1px solid #EDE5D8; vertical-align: top; line-height: 1.5; }
+  .word-table tr:last-child td { border-bottom: none; }
+  .word-table tr:hover td { background: #FBF8F3; }
+  .w-fr { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; }
+  .w-pron { font-size: 11px; color: var(--burgundy); font-family: 'Crimson Pro', serif; margin-top: 2px; }
+  .w-kr { font-weight: 500; }
+  .w-grammar { font-size: 12px; color: var(--muted); }
+  .w-memo { font-size: 12px; color: var(--green); }
+  .w-memo::before { content: '💡 '; }
+
+  /* Grammar cards */
+  .grammar-card { background: var(--card); border: 1px solid var(--light-gold); border-radius: 6px; padding: 20px; margin-bottom: 14px; }
+  .grammar-title { font-family: 'Playfair Display', serif; font-size: 15px; margin-bottom: 10px; color: var(--burgundy); }
+  .grammar-body { font-size: 14px; line-height: 1.8; }
+  .fr { font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  .compare-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  .compare-table td { padding: 7px 10px; border-bottom: 1px solid #EDE5D8; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .label-cell { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); width: 80px; }
+  .good { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--green); }
+  .meh { font-family: 'Playfair Display', serif; font-weight: 400; color: var(--muted); text-decoration: line-through; }
+
+  /* Variations */
+  .var-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .var-table td { padding: 8px 12px; border-bottom: 1px solid #EDE5D8; vertical-align: top; }
+  .var-table tr:last-child td { border-bottom: none; }
+  .var-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); width: 80px; padding-top: 11px; }
+  .var-fr { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; }
+  .var-kr { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .var-note { font-size: 11px; color: var(--gold); margin-top: 2px; }
+
+  /* Vocab grid */
+  .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+  .vocab-item { background: var(--card); border: 1px solid #E8E0D4; border-radius: 5px; padding: 10px 14px; }
+  .vocab-fr { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; }
+  .vocab-pron { font-size: 11px; color: var(--burgundy); font-family: 'Crimson Pro', serif; }
+  .vocab-kr { font-size: 12px; color: var(--muted); font-weight: 300; margin-top: 1px; }
+
+  /* Expression */
+  .expr-box { background: var(--burgundy); color: white; border-radius: 6px; padding: 22px 24px; }
+  .expr-main { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; }
+  .expr-pron { font-family: 'Crimson Pro', serif; font-size: 14px; color: var(--light-gold); margin-bottom: 12px; }
+  .expr-meaning { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.7; }
+  .expr-usage { margin-top: 12px; font-size: 12px; color: var(--light-gold); line-height: 1.7; }
+
+  /* Clickable words */
+  .word {
+    cursor: pointer;
+    border-bottom: 2px dotted var(--gold);
+    padding-bottom: 1px;
+    transition: background 0.15s;
+    display: inline;
+    border-radius: 2px;
+    color: var(--cream);
+  }
+  .word:hover, .word.active { background: rgba(184,147,74,0.3); }
+
+  /* Tooltip */
+  .tooltip {
+    display: none; position: fixed;
+    background: var(--dark); color: var(--cream);
+    border-radius: 8px; padding: 14px 16px;
+    width: 280px; z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    pointer-events: none; border-top: 3px solid var(--gold);
+  }
+  .tooltip.visible { display: block; }
+  .tip-word { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--light-gold); margin-bottom: 2px; }
+  .tip-pron { font-family: 'Crimson Pro', serif; font-size: 13px; color: var(--gold); margin-bottom: 8px; }
+  .tip-kr { font-size: 15px; font-weight: 500; margin-bottom: 7px; }
+  .tip-grammar { font-size: 12px; color: #BBB; padding: 4px 8px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-bottom: 7px; }
+  .tip-memo { font-size: 12px; color: var(--light-gold); }
+  .tip-memo::before { content: '💡 '; }
+
+  /* Quiz */
+  .quiz-item { background: var(--card); border: 1px solid #E8E0D4; border-left: 3px solid var(--gold); border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.6; }
+  .quiz-q { font-weight: 500; margin-bottom: 4px; }
+  .quiz-hint { color: var(--muted); font-size: 12px; }
+  .answer-toggle { margin-top: 10px; font-size: 12px; color: var(--burgundy); cursor: pointer; font-weight: 600; user-select: none; display: inline-block; }
+  .answer-text { display: none; margin-top: 8px; font-family: 'Playfair Display', serif; font-size: 15px; color: var(--green); padding: 8px 10px; background: #F0F7F2; border-radius: 4px; }
+
+  .culture-note { border-top: 1px dashed var(--light-gold); margin-top: 24px; padding-top: 16px; font-size: 13px; color: var(--muted); font-family: 'Crimson Pro', serif; line-height: 1.8; }
+  .culture-note strong { color: var(--dark); }
+
+  .back-link { display: inline-block; margin-bottom: 24px; font-size: 13px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back-link:hover { color: var(--burgundy); }
+
+  @media (max-width: 480px) {
+    .vocab-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .badges { flex-direction: row; }
+    .tooltip { width: 240px; }
+    .word-table, .compare-table, .var-table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="subtitle">Apprendre le Francais</div>
+    <h1>Lecon du Jour</h1>
+  </div>
+  <div class="badges">
+    <span class="badge level">A1 · 뉴스</span>
+    <span class="badge topic">Actualites</span>
+  </div>
+</div>
+
+<div class="main">
+  <a class="back-link" href="../index.html">← 목록으로</a>
+
+  <!-- Sentence -->
+  <div class="section-label">오늘의 문장</div>
+  <div class="sentence-card">
+    <div class="sentence-fr">
+      <span class="word" data-key="Le">Le</span>&nbsp;<span class="word" data-key="president">president</span>&nbsp;<span class="word" data-key="francais">francais</span>&nbsp;<span class="word" data-key="visite">visite</span>&nbsp;<span class="word" data-key="la">la</span>&nbsp;<span class="word" data-key="Coree">Coree</span>&nbsp;<span class="word" data-key="du">du</span>&nbsp;<span class="word" data-key="Sud">Sud</span>.
+    </div>
+    <div class="sentence-kr">프랑스 대통령이 한국을 방문한다.</div>
+    <div class="sentence-pron">르 프헤지덩 프헝쎄 비지트 라 코헤 뒤 쒸드</div>
+  </div>
+  <div class="click-hint">밑줄 친 단어를 클릭하면 분석 팝업이 나와요</div>
+
+  <!-- Word breakdown table -->
+  <div class="section-label">단어 분석</div>
+  <div style="background: var(--card); border: 1px solid var(--light-gold); border-radius: 6px; overflow: hidden; margin-bottom: 4px;">
+    <table class="word-table">
+      <thead>
+        <tr>
+          <th>단어</th>
+          <th>의미</th>
+          <th>품사 / 메모</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="w-fr">Le</div><div class="w-pron">[르] / [lə]</div></td>
+          <td><div class="w-kr">그 (the)</div></td>
+          <td><div class="w-grammar">남성 정관사 단수</div><div class="w-memo">명사 성별에 따라 le / la / les</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">president</div><div class="w-pron">[프헤지덩] / [pʁezidɑ̃]</div></td>
+          <td><div class="w-kr">대통령</div></td>
+          <td><div class="w-grammar">남성 명사</div><div class="w-memo">영어 president와 동일 어원 — 라틴어 "앞에 앉은 자"</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">francais</div><div class="w-pron">[프헝쎄] / [fʁɑ̃sɛ]</div></td>
+          <td><div class="w-kr">프랑스의 (형용사)</div></td>
+          <td><div class="w-grammar">형용사, 명사 뒤에 위치</div><div class="w-memo">여성형: francaise. -s 묵음, "an"은 비음</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">visite</div><div class="w-pron">[비지트] / [vizit]</div></td>
+          <td><div class="w-kr">방문한다</div></td>
+          <td><div class="w-grammar">visiter 동사 3인칭 단수 현재형</div><div class="w-memo">현재형이 진행형도 겸함 — "방문 중이다"도 포함</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">la</div><div class="w-pron">[라] / [la]</div></td>
+          <td><div class="w-kr">그 (the)</div></td>
+          <td><div class="w-grammar">여성 정관사 단수</div><div class="w-memo">Coree가 여성 명사라서 la</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">Coree</div><div class="w-pron">[코헤] / [kɔʁe]</div></td>
+          <td><div class="w-kr">한국</div></td>
+          <td><div class="w-grammar">여성 고유명사</div><div class="w-memo">나라 이름은 정관사 동반: la France, la Coree, le Japon</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">du</div><div class="w-pron">[뒤] / [dy]</div></td>
+          <td><div class="w-kr">~의</div></td>
+          <td><div class="w-grammar">de + le 축약</div><div class="w-memo">모음/관사 충돌 회피. de + le = du, de + la = de la (축약 없음)</div></td>
+        </tr>
+        <tr>
+          <td><div class="w-fr">Sud</div><div class="w-pron">[쒸드] / [syd]</div></td>
+          <td><div class="w-kr">남쪽</div></td>
+          <td><div class="w-grammar">남성 명사</div><div class="w-memo">Coree du Sud = "남쪽의 한국" = 대한민국</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Grammar points -->
+  <div class="section-label">문법 포인트</div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">1. 형용사는 명사 뒤에</div>
+    <div class="grammar-body">
+      영어: the French president<br>
+      프랑스어: le president <span class="fr">francais</span> (the president French)<br><br>
+      대부분의 형용사가 명사 뒤에 위치해. 예시:<br><br>
+      <table class="compare-table">
+        <tr><td class="label-cell">뒤 (일반)</td><td><span class="fr">le president francais</span></td><td style="font-size:12px; color:var(--muted);">프랑스 대통령</td></tr>
+        <tr><td class="label-cell">뒤 (일반)</td><td><span class="fr">une voiture rouge</span></td><td style="font-size:12px; color:var(--muted);">빨간 차</td></tr>
+        <tr><td class="label-cell">앞 (BAGS)</td><td><span class="fr">un grand homme</span></td><td style="font-size:12px; color:var(--muted);">큰/위대한 남자</td></tr>
+        <tr><td class="label-cell">앞 (BAGS)</td><td><span class="fr">une belle femme</span></td><td style="font-size:12px; color:var(--muted);">아름다운 여자</td></tr>
+      </table>
+      <br>
+      BAGS (Beauty, Age, Goodness, Size) 관련 짧은 형용사만 예외적으로 앞에 위치.
+      <br><br>
+      참고: <span class="fr">femme fatale</span>에서 fatale이 뒤에 오는 건 "치명적인"이 BAGS에 해당 안 하기 때문 — 규칙 그대로.
+    </div>
+  </div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">2. 명사의 성(Genre) — le vs la</div>
+    <div class="grammar-body">
+      프랑스어 명사는 모두 남성 또는 여성이야. 정관사가 달라져:<br><br>
+      <table class="compare-table">
+        <tr><td class="label-cell">남성</td><td><span class="fr">le president, le pays, le ministre</span></td></tr>
+        <tr><td class="label-cell">여성</td><td><span class="fr">la Coree, la France, la rencontre</span></td></tr>
+        <tr><td class="label-cell">복수</td><td><span class="fr">les presidents, les pays</span></td></tr>
+      </table>
+      <br>
+      규칙이 없어서 단어마다 외워야 해. 어휘 외울 때는 항상 관사와 함께: <span class="fr">un president, la Coree</span>.
+    </div>
+  </div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">3. 문장 변형 — 같은 문장으로 4가지 표현</div>
+    <div class="grammar-body">
+      <table class="var-table">
+        <tr>
+          <td class="var-label">현재</td>
+          <td><div class="var-fr">Le president francais visite la Coree du Sud.</div><div class="var-kr">프랑스 대통령이 한국을 방문한다.</div></td>
+        </tr>
+        <tr>
+          <td class="var-label">부정</td>
+          <td><div class="var-fr">Le president francais ne visite pas la Coree du Sud.</div><div class="var-kr">프랑스 대통령이 한국을 방문하지 않는다.</div><div class="var-note">ne ... pas로 동사를 감싸기</div></td>
+        </tr>
+        <tr>
+          <td class="var-label">의문</td>
+          <td><div class="var-fr">Est-ce que le president francais visite la Coree du Sud ?</div><div class="var-kr">프랑스 대통령이 한국을 방문하나요?</div><div class="var-note">Est-ce que [에스크] 앞에 붙이기</div></td>
+        </tr>
+        <tr>
+          <td class="var-label">과거</td>
+          <td><div class="var-fr">Le president francais a visite la Coree du Sud.</div><div class="var-kr">프랑스 대통령이 한국을 방문했다.</div><div class="var-note">avoir + 과거분사 (passe compose)</div></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Vocab -->
+  <div class="section-label">관련 어휘 (정치/뉴스 A1)</div>
+  <div class="vocab-grid">
+    <div class="vocab-item">
+      <div class="vocab-fr">le gouvernement</div>
+      <div class="vocab-pron">[르 구베흐느망]</div>
+      <div class="vocab-kr">정부</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le Premier ministre</div>
+      <div class="vocab-pron">[르 프허미에 미니스트흐]</div>
+      <div class="vocab-kr">국무총리</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le ministre</div>
+      <div class="vocab-pron">[르 미니스트흐]</div>
+      <div class="vocab-kr">장관</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">l'election</div>
+      <div class="vocab-pron">[렐렉씨옹]</div>
+      <div class="vocab-kr">선거</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">la rencontre</div>
+      <div class="vocab-pron">[라 헝꽁트흐]</div>
+      <div class="vocab-kr">만남, 회담</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">le pays</div>
+      <div class="vocab-pron">[르 페이]</div>
+      <div class="vocab-kr">나라</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Expression -->
+  <div class="section-label">오늘의 표현</div>
+  <div class="expr-box">
+    <div class="expr-main">Je viens de Coree du Sud.</div>
+    <div class="expr-pron">[주 비엥 드 코헤 뒤 쒸드]</div>
+    <div class="expr-meaning">
+      나는 한국에서 왔어요.<br><br>
+      venir de + 장소 = "~에서 오다 / 출신이다"
+    </div>
+    <div class="expr-usage">
+      Je viens de Seoul. (서울에서 왔어요)<br>
+      Tu viens d'ou ? [튀 비엥 두] (어디서 왔어?)<br>
+      Il vient du Japon. (그는 일본에서 왔어)
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Quiz -->
+  <div class="section-label">미니 퀴즈</div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">1. "한국 장관이 프랑스를 방문한다"를 프랑스어로?</div>
+    <div class="quiz-hint">힌트: le ministre, coreen, visiter, la France</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">Le ministre coreen visite la France.</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">2. "Le president francais ne visite pas la Coree du Sud"를 한국어로?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">프랑스 대통령이 한국을 방문하지 않는다.</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">3. "Coree"는 왜 정관사 "la"를 써? (le가 아닌 이유)</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">Coree는 여성 명사이기 때문. 프랑스어 명사는 성별이 있고, 정관사 le/la가 그에 따라 결정돼.</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">4. "du"가 뭐의 줄임말이야?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">de + le = du. "~의 그" 뜻. Coree du Sud = "남쪽의 한국".</div>
+  </div>
+
+  <div class="culture-note">
+    🌍 <strong>문화 포인트</strong> — 프랑스와 한국은 1886년 수교. 양국 정상 방문은 외교 뉴스 단골 소재야. 이런 단순 구조의 문장이 Le Monde 헤드라인에서 자주 등장하고, A1에서 시작해 A2, B1으로 올라가면서 점점 복잡한 외교 어휘가 붙기 시작해.
+  </div>
+
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tip-word" id="tw"></div>
+  <div class="tip-pron" id="tp"></div>
+  <div class="tip-kr" id="tk"></div>
+  <div class="tip-grammar" id="tg"></div>
+  <div class="tip-memo" id="tm"></div>
+</div>
+
+<script>
+const data = {
+  Le: { pron:'[르] / [lə]', kr:'그 (the)', grammar:'남성 정관사 단수', memo:'명사 성별에 따라 le / la / les' },
+  president: { pron:'[프헤지덩] / [pʁezidɑ̃]', kr:'대통령', grammar:'남성 명사', memo:'영어 president와 동일 어원. 끝 -t 묵음, "ent"는 비음' },
+  francais: { pron:'[프헝쎄] / [fʁɑ̃sɛ]', kr:'프랑스의', grammar:'형용사 — 명사 뒤에 위치', memo:'여성형 francaise. "r"은 목구멍 소리, "an"은 비음' },
+  visite: { pron:'[비지트] / [vizit]', kr:'방문한다', grammar:'visiter 3인칭 단수 현재형', memo:'현재형이 진행형도 겸함. 영어 visit과 동일 어원' },
+  la: { pron:'[라] / [la]', kr:'그 (the)', grammar:'여성 정관사 단수', memo:'Coree가 여성 명사라서 la. le vs la는 명사 성별로 결정' },
+  Coree: { pron:'[코헤] / [kɔʁe]', kr:'한국', grammar:'여성 고유명사', memo:'나라 이름은 정관사 동반: la Coree, la France, le Japon' },
+  du: { pron:'[뒤] / [dy]', kr:'~의 (de + le 축약)', grammar:'전치사 de + 남성 정관사 le의 축약형', memo:'Coree du Sud = 남쪽의 한국. de + la는 축약 없음' },
+  Sud: { pron:'[쒸드] / [syd]', kr:'남쪽', grammar:'남성 명사', memo:'끝 -d 발음됨 (보통 끝 자음은 묵음이지만 예외). Nord [노흐] = 북쪽' }
+};
+
+const tip = document.getElementById('tooltip');
+
+function showTip(el, key) {
+  const d = data[key]; if (!d) return;
+  document.getElementById('tw').textContent = el.textContent.trim();
+  document.getElementById('tp').textContent = d.pron;
+  document.getElementById('tk').textContent = d.kr;
+  document.getElementById('tg').textContent = d.grammar;
+  document.getElementById('tm').textContent = d.memo;
+
+  const r = el.getBoundingClientRect();
+  let top = r.bottom + 8 + window.scrollY;
+  let left = r.left + window.scrollX;
+  if (left + 286 > window.innerWidth - 8) left = window.innerWidth - 294;
+  if (top + 200 > window.scrollY + window.innerHeight) top = r.top + window.scrollY - 210;
+  tip.style.top = Math.max(8, top) + 'px';
+  tip.style.left = Math.max(8, left) + 'px';
+  tip.classList.add('visible');
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+  el.classList.add('active');
+}
+
+document.querySelectorAll('.word').forEach(el => {
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    if (el.classList.contains('active') && tip.classList.contains('visible')) {
+      tip.classList.remove('visible');
+      el.classList.remove('active');
+    } else {
+      showTip(el, el.dataset.key);
+    }
+  });
+});
+
+document.addEventListener('click', () => {
+  tip.classList.remove('visible');
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+});
+
+function toggle(btn) {
+  const ans = btn.nextElementSibling;
+  const open = ans.style.display === 'block';
+  ans.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? '▶ 정답 보기' : '▼ 정답 숨기기';
+}
+</script>
+</body>
+</html>
