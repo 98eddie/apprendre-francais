@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Leçon du Jour — Au Café</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;600&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream: #FAF6EF;
@@ -35,7 +35,7 @@
   }
   .subtitle {
     font-family: 'Crimson Pro', serif;
-    font-style: italic;
+    
     font-size: 12px;
     color: var(--gold);
     letter-spacing: 2px;
@@ -62,7 +62,7 @@
     border: 1px solid var(--gold);
     color: var(--gold);
     font-family: 'Crimson Pro', serif;
-    font-style: italic;
+    
     font-weight: 400;
   }
   .main { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
@@ -91,7 +91,7 @@
     font-size: 13px;
     color: var(--muted);
     font-family: 'Crimson Pro', serif;
-    font-style: italic;
+    
     margin-bottom: 18px;
   }
   .exchange { display: flex; flex-direction: column; gap: 14px; }
@@ -112,8 +112,8 @@
     margin-bottom: 6px;
   }
   .bubble-korean { font-size: 13px; color: var(--muted); font-weight: 300; }
-  .bubble-pron { font-size: 12px; color: var(--burgundy); font-family: 'Crimson Pro', serif; font-style: italic; margin-top: 3px; }
-  .click-hint { text-align: center; font-size: 12px; color: var(--muted); font-style: italic; margin-top: 10px; font-family: 'Crimson Pro', serif; }
+  .bubble-pron { font-size: 12px; color: var(--burgundy); font-family: 'Crimson Pro', serif;  margin-top: 3px; }
+  .click-hint { text-align: center; font-size: 12px; color: var(--muted);  margin-top: 10px; font-family: 'Crimson Pro', serif; }
 
   /* Clickable words */
   .word {
@@ -145,10 +145,10 @@
   }
   .tooltip.visible { display: block; }
   .tip-word { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--light-gold); margin-bottom: 2px; }
-  .tip-pron { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; color: var(--gold); margin-bottom: 8px; }
+  .tip-pron { font-family: 'Crimson Pro', serif;  font-size: 13px; color: var(--gold); margin-bottom: 8px; }
   .tip-kr { font-size: 15px; font-weight: 500; margin-bottom: 7px; }
   .tip-grammar { font-size: 12px; color: #BBB; padding: 4px 8px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-bottom: 7px; }
-  .tip-memo { font-size: 12px; color: var(--light-gold); font-style: italic; }
+  .tip-memo { font-size: 12px; color: var(--light-gold);  }
   .tip-memo::before { content: '💡 '; }
 
   /* Grammar cards */
@@ -166,13 +166,13 @@
     color: var(--burgundy);
   }
   .grammar-body { font-size: 14px; line-height: 1.8; }
-  .fr { font-family: 'Playfair Display', serif; font-style: italic; }
+  .fr { font-family: 'Playfair Display', serif;  }
   .compare-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
   .compare-table td { padding: 6px 10px; }
   .compare-table tr:first-child td { background: #F8F8F8; border-radius: 3px; }
   .label-cell { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); width: 60px; }
-  .good { font-family: 'Playfair Display', serif; font-style: italic; color: var(--green); }
-  .meh { font-family: 'Playfair Display', serif; font-style: italic; color: var(--muted); text-decoration: line-through; }
+  .good { font-family: 'Playfair Display', serif;  color: var(--green); }
+  .meh { font-family: 'Playfair Display', serif;  color: var(--muted); text-decoration: line-through; }
   .note-cell { font-size: 12px; }
 
   /* Vocab grid */
@@ -183,8 +183,8 @@
     border-radius: 5px;
     padding: 10px 14px;
   }
-  .vocab-fr { font-family: 'Playfair Display', serif; font-size: 15px; font-style: italic; }
-  .vocab-pron { font-size: 11px; color: var(--burgundy); font-family: 'Crimson Pro', serif; font-style: italic; }
+  .vocab-fr { font-family: 'Playfair Display', serif; font-size: 15px;  }
+  .vocab-pron { font-size: 11px; color: var(--burgundy); font-family: 'Crimson Pro', serif;  }
   .vocab-kr { font-size: 12px; color: var(--muted); font-weight: 300; margin-top: 1px; }
 
   /* Expression */
@@ -195,9 +195,9 @@
     padding: 22px 24px;
   }
   .expr-main { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 4px; }
-  .expr-pron { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 14px; color: var(--light-gold); margin-bottom: 12px; }
+  .expr-pron { font-family: 'Crimson Pro', serif;  font-size: 14px; color: var(--light-gold); margin-bottom: 12px; }
   .expr-meaning { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.7; }
-  .expr-usage { margin-top: 12px; font-size: 12px; color: var(--light-gold); font-style: italic; line-height: 1.7; }
+  .expr-usage { margin-top: 12px; font-size: 12px; color: var(--light-gold);  line-height: 1.7; }
 
   /* Quiz */
   .quiz-item {
@@ -211,12 +211,12 @@
     line-height: 1.6;
   }
   .quiz-q { font-weight: 500; margin-bottom: 4px; }
-  .quiz-hint { color: var(--muted); font-size: 12px; font-style: italic; }
+  .quiz-hint { color: var(--muted); font-size: 12px;  }
   .answer-toggle { margin-top: 10px; font-size: 12px; color: var(--burgundy); cursor: pointer; font-weight: 600; user-select: none; display: inline-block; }
   .answer-text {
     display: none; margin-top: 8px;
     font-family: 'Playfair Display', serif;
-    font-style: italic; font-size: 15px;
+     font-size: 15px;
     color: var(--green); padding: 8px 10px;
     background: #F0F7F2; border-radius: 4px;
   }
@@ -228,7 +228,7 @@
     font-size: 13px;
     color: var(--muted);
     font-family: 'Crimson Pro', serif;
-    font-style: italic;
+    
     line-height: 1.8;
   }
   .culture-note strong { color: var(--dark); font-style: normal; }
