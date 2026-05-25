@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apprendre le Français</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+KR:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6EF;
+    --dark: #1C1B18;
+    --burgundy: #8B2233;
+    --gold: #B8934A;
+    --light-gold: #EDD9A3;
+    --muted: #6B6358;
+    --card: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--dark); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+
+  /* Header */
+  header {
+    background: var(--dark);
+    padding: 28px 40px 24px;
+    border-bottom: 3px solid var(--gold);
+  }
+  .header-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; }
+  .site-subtitle { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 12px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .site-title { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--cream); font-weight: 700; }
+  .site-tagline { font-size: 13px; color: #888; font-weight: 300; }
+
+  /* Stats bar */
+  .stats-bar { background: #141310; padding: 10px 40px; border-bottom: 1px solid #2a2820; }
+  .stats-inner { max-width: 960px; margin: 0 auto; display: flex; gap: 32px; }
+  .stat { display: flex; flex-direction: column; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); }
+  .stat-label { font-size: 11px; color: #666; letter-spacing: 0.5px; }
+
+  /* Main */
+  main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Filter tabs */
+  .filter-wrap { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 6px 16px;
+    border: 1px solid var(--light-gold);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--dark); }
+  .filter-btn.active { background: var(--dark); color: var(--cream); border-color: var(--dark); }
+
+  /* Section label */
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--burgundy);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--light-gold); }
+
+  /* Lesson grid */
+  .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 48px; }
+
+  /* Lesson card */
+  .lesson-card {
+    background: var(--card);
+    border: 1px solid #E8E0D4;
+    border-radius: 6px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+  .lesson-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--burgundy);
+  }
+  .lesson-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: var(--light-gold); }
+  .lesson-card:hover::before { background: var(--gold); }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .level-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    padding: 3px 8px; border-radius: 2px;
+  }
+  .level-badge.A1 { background: #E8F4EC; color: #2D6A4F; }
+  .level-badge.A2 { background: #EAF0FB; color: #2C4A8B; }
+  .level-badge.B1 { background: #FFF3E0; color: #8B5E00; }
+  .level-badge.B2 { background: #F3E8FF; color: #6B2D8B; }
+
+  .card-date { font-size: 11px; color: var(--muted); font-family: 'Crimson Pro', serif; font-style: italic; }
+
+  .card-topic { font-size: 11px; color: var(--gold); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 17px; margin-bottom: 4px; line-height: 1.3; }
+  .card-title-fr { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+  .card-footer { display: flex; justify-content: space-between; align-items: center; }
+  .card-arrow { font-size: 14px; color: var(--burgundy); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-text { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 16px; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid var(--light-gold);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 20px 20px 16px; }
+    .site-title { font-size: 24px; }
+    .stats-bar { padding: 10px 20px; }
+    main { padding: 28px 16px 60px; }
+    .lesson-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="site-subtitle">나만의 프랑스어 노트</div>
+      <div class="site-title">Apprendre le Français</div>
+    </div>
+    <div class="site-tagline">레슨을 쌓아가는 중 ✍️</div>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat">
+      <span class="stat-num" id="total-count">—</span>
+      <span class="stat-label">전체 레슨</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="a1-count">—</span>
+      <span class="stat-label">A1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="a2-count">—</span>
+      <span class="stat-label">A2</span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="filter-wrap">
+    <button class="filter-btn active" onclick="filter('all')">Tous</button>
+    <button class="filter-btn" onclick="filter('A1')">A1</button>
+    <button class="filter-btn" onclick="filter('A2')">A2</button>
+    <button class="filter-btn" onclick="filter('B1')">B1</button>
+    <button class="filter-btn" onclick="filter('B2')">B2</button>
+  </div>
+
+  <div class="section-label">레슨 목록 (Leçons)</div>
+  <div class="lesson-grid" id="grid"></div>
+</main>
+
+<footer>
+  Claude와 함께 만든 나만의 프랑스어 공부 아카이브 — <em>Bon apprentissage !</em>
+</footer>
+
+<script>
+// 레슨 목록 — 새 레슨 추가할 때마다 여기에 추가됨
+const lessons = [
+  {
+    id: 1,
+    level: 'A1',
+    topic: '일상 회화',
+    title: '카페에서 주문하기',
+    title_fr: 'Au café',
+    url: 'lessons/cafe.html',
+    date: '2026-05-25'
+  }
+  // 다음 레슨들이 여기에 추가됩니다
+];
+
+let currentFilter = 'all';
+
+function filter(level) {
+  currentFilter = level;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
+}
+
+function render() {
+  const filtered = currentFilter === 'all' ? lessons : lessons.filter(l => l.level === currentFilter);
+  const grid = document.getElementById('grid');
+
+  // Update stats
+  document.getElementById('total-count').textContent = lessons.length;
+  document.getElementById('a1-count').textContent = lessons.filter(l => l.level === 'A1').length;
+  document.getElementById('a2-count').textContent = lessons.filter(l => l.level === 'A2').length;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="empty-icon">📖</div>
+      <div class="empty-text">아직 이 레벨의 레슨이 없어요. 곧 추가될 예정!</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(l => `
+    <a class="lesson-card" href="${l.url}" target="_blank">
+      <div class="card-top">
+        <span class="level-badge ${l.level}">${l.level}</span>
+        <span class="card-date">${formatDate(l.date)}</span>
+      </div>
+      <div class="card-topic">${l.topic}</div>
+      <div class="card-title">${l.title}</div>
+      <div class="card-title-fr">${l.title_fr}</div>
+      <div class="card-footer">
+        <span style="font-size:12px; color: var(--muted);">레슨 보기</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+  `).join('');
+}
+
+function formatDate(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+render();
+</script>
+</body>
+</html>
