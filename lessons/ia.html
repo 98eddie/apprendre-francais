@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecon du Jour — L'IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;600&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF6EF;
+    --dark: #1C1B18;
+    --burgundy: #8B2233;
+    --gold: #B8934A;
+    --light-gold: #EDD9A3;
+    --card: #FFFFFF;
+    --muted: #6B6358;
+    --highlight: #FFF3C4;
+    --green: #1a6b3a;
+    --blue: #1a3a6b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--dark); font-family: 'Noto Sans KR', sans-serif; min-height: 100vh; }
+
+  .header { background: var(--dark); padding: 22px 32px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--gold); }
+  .subtitle { font-family: 'Crimson Pro', serif; font-size: 12px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--cream); font-weight: 700; }
+  .badges { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; }
+  .badge.level { background: #1a3a6b; color: white; }
+  .badge.topic { background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: 'Crimson Pro', serif; font-weight: 400; }
+
+  .main { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--burgundy); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--light-gold); }
+  .divider { height: 1px; background: var(--light-gold); margin: 28px 0; }
+
+  /* Sentence cards */
+  .sentence-block { display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px; }
+  .sentence-card { background: var(--dark); border-radius: 8px; padding: 22px 28px; border-left: 4px solid var(--gold); }
+  .sentence-card.s2 { border-left-color: var(--burgundy); }
+  .sentence-card.s3 { border-left-color: #4A7C59; }
+  .sentence-num { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .sentence-card.s2 .sentence-num { color: #c9a0a8; }
+  .sentence-card.s3 .sentence-num { color: #8FC4A0; }
+  .sentence-fr { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--cream); line-height: 1.7; margin-bottom: 8px; }
+  .sentence-kr { font-size: 13px; color: #AAA; font-weight: 300; margin-bottom: 6px; }
+  .sentence-pron { font-size: 12px; color: var(--gold); font-family: 'Crimson Pro', serif; }
+  .sentence-card.s2 .sentence-pron { color: #c9a0a8; }
+  .sentence-card.s3 .sentence-pron { color: #8FC4A0; }
+
+  .word { cursor: pointer; border-bottom: 2px dotted rgba(184,147,74,0.6); padding-bottom: 1px; transition: background 0.15s; display: inline; border-radius: 2px; color: var(--cream); }
+  .word:hover, .word.active { background: rgba(184,147,74,0.25); }
+
+  .click-hint { text-align: center; font-size: 12px; color: var(--muted); margin: 8px 0 24px; font-family: 'Crimson Pro', serif; }
+
+  /* Tooltip */
+  .tooltip { display: none; position: fixed; background: var(--dark); color: var(--cream); border-radius: 8px; padding: 14px 16px; width: 290px; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.35); pointer-events: none; border-top: 3px solid var(--gold); }
+  .tooltip.visible { display: block; }
+  .tip-word { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--light-gold); margin-bottom: 2px; }
+  .tip-pron { font-family: 'Crimson Pro', serif; font-size: 13px; color: var(--gold); margin-bottom: 8px; }
+  .tip-kr { font-size: 15px; font-weight: 500; margin-bottom: 7px; }
+  .tip-grammar { font-size: 12px; color: #BBB; padding: 4px 8px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-bottom: 7px; }
+  .tip-memo { font-size: 12px; color: var(--light-gold); }
+  .tip-memo::before { content: '💡 '; }
+
+  /* Grammar */
+  .grammar-card { background: var(--card); border: 1px solid var(--light-gold); border-radius: 6px; padding: 20px; margin-bottom: 14px; }
+  .grammar-title { font-family: 'Playfair Display', serif; font-size: 15px; margin-bottom: 10px; color: var(--burgundy); }
+  .grammar-body { font-size: 14px; line-height: 1.9; }
+  .fr { font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .modal-box { background: #F5F0E8; border-radius: 5px; padding: 12px; text-align: center; }
+  .modal-verb { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--burgundy); margin-bottom: 4px; }
+  .modal-pron { font-size: 11px; color: var(--muted); font-family: 'Crimson Pro', serif; margin-bottom: 4px; }
+  .modal-kr { font-size: 12px; color: var(--dark); font-weight: 500; }
+
+  .conj-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  .conj-table td { padding: 6px 10px; border-bottom: 1px solid #EDE5D8; }
+  .conj-table tr:last-child td { border-bottom: none; }
+  .conj-table td:first-child { color: var(--muted); width: 100px; }
+  .conj-table td:last-child { font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  .example-row { background: #F5F0E8; border-radius: 4px; padding: 8px 12px; margin: 6px 0; font-size: 13px; }
+  .example-fr { font-family: 'Playfair Display', serif; font-weight: 700; }
+  .example-kr { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .adverb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+  .adverb-item { background: #F5F0E8; border-radius: 4px; padding: 8px 12px; font-size: 13px; }
+  .adverb-adj { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--muted); }
+  .adverb-adv { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--burgundy); }
+  .adverb-kr { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Vocab */
+  .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+  .vocab-item { background: var(--card); border: 1px solid #E8E0D4; border-radius: 5px; padding: 10px 14px; }
+  .vocab-fr { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; }
+  .vocab-pron { font-size: 11px; color: var(--burgundy); font-family: 'Crimson Pro', serif; }
+  .vocab-kr { font-size: 12px; color: var(--muted); font-weight: 300; margin-top: 1px; }
+
+  /* Expression */
+  .expr-box { background: #1a3a6b; color: white; border-radius: 6px; padding: 22px 24px; }
+  .expr-main { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 4px; }
+  .expr-pron { font-family: 'Crimson Pro', serif; font-size: 14px; color: var(--light-gold); margin-bottom: 12px; }
+  .expr-meaning { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.7; }
+  .expr-usage { margin-top: 12px; font-size: 12px; color: var(--light-gold); line-height: 1.7; }
+
+  /* Quiz */
+  .quiz-item { background: var(--card); border: 1px solid #E8E0D4; border-left: 3px solid var(--gold); border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; font-size: 14px; line-height: 1.6; }
+  .quiz-q { font-weight: 500; margin-bottom: 4px; }
+  .quiz-hint { color: var(--muted); font-size: 12px; }
+  .answer-toggle { margin-top: 10px; font-size: 12px; color: var(--burgundy); cursor: pointer; font-weight: 600; user-select: none; display: inline-block; }
+  .answer-text { display: none; margin-top: 8px; font-family: 'Playfair Display', serif; font-size: 14px; color: var(--green); padding: 8px 10px; background: #F0F7F2; border-radius: 4px; line-height: 1.6; }
+
+  .culture-note { border-top: 1px dashed var(--light-gold); margin-top: 24px; padding-top: 16px; font-size: 13px; color: var(--muted); font-family: 'Crimson Pro', serif; line-height: 1.8; }
+  .culture-note strong { color: var(--dark); }
+
+  .back-link { display: inline-block; margin-bottom: 24px; font-size: 13px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .back-link:hover { color: var(--burgundy); }
+
+  @media (max-width: 480px) {
+    .vocab-grid { grid-template-columns: 1fr; }
+    .modal-grid { grid-template-columns: 1fr; }
+    .adverb-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .badges { flex-direction: row; }
+    .tooltip { width: 240px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="subtitle">Apprendre le Francais</div>
+    <h1>Lecon du Jour</h1>
+  </div>
+  <div class="badges">
+    <span class="badge level">A2 · 시사/기술</span>
+    <span class="badge topic">Intelligence artificielle</span>
+  </div>
+</div>
+
+<div class="main">
+  <a class="back-link" href="../index.html">← 목록으로</a>
+
+  <!-- Sentences -->
+  <div class="section-label">오늘의 3문장</div>
+
+  <div class="sentence-block">
+    <div class="sentence-card">
+      <div class="sentence-num">Phrase 1 — 기술</div>
+      <div class="sentence-fr">
+        <span class="word" data-key="Lintelligence">L'intelligence</span>&nbsp;<span class="word" data-key="artificielle">artificielle</span>&nbsp;<span class="word" data-key="transforme">transforme</span>&nbsp;<span class="word" data-key="notre">notre</span>&nbsp;<span class="word" data-key="societe">societe</span>.
+      </div>
+      <div class="sentence-kr">인공지능이 우리 사회를 변화시키고 있다.</div>
+      <div class="sentence-pron">랭텔리정스 아흐티피씨엘 트랑스포흠 노트흐 소씨에테.</div>
+    </div>
+
+    <div class="sentence-card s2">
+      <div class="sentence-num">Phrase 2 — 창업</div>
+      <div class="sentence-fr">
+        <span class="word" data-key="Les">Les</span>&nbsp;<span class="word" data-key="startups">startups</span>&nbsp;<span class="word" data-key="levent">levent</span>&nbsp;<span class="word" data-key="des">des</span>&nbsp;<span class="word" data-key="fonds">fonds</span>&nbsp;<span class="word" data-key="pour">pour</span>&nbsp;<span class="word" data-key="developper">developper</span>&nbsp;<span class="word" data-key="de">de</span>&nbsp;<span class="word" data-key="nouveaux">nouveaux</span>&nbsp;<span class="word" data-key="produits">produits</span>.
+      </div>
+      <div class="sentence-kr">스타트업들이 새로운 제품을 개발하기 위해 자금을 조달한다.</div>
+      <div class="sentence-pron">레 스타흐텁 르브 데 퐁 뿌흐 데블로뻬 드 누보 프호뒤.</div>
+    </div>
+
+    <div class="sentence-card s3">
+      <div class="sentence-num">Phrase 3 — 의학 + AI</div>
+      <div class="sentence-fr">
+        <span class="word" data-key="Un">Un</span>&nbsp;<span class="word" data-key="medecin">medecin</span>&nbsp;<span class="word" data-key="peut">peut</span>&nbsp;<span class="word" data-key="utiliser">utiliser</span>&nbsp;<span class="word" data-key="lIA">l'IA</span>&nbsp;<span class="word" data-key="pour2">pour</span>&nbsp;<span class="word" data-key="diagnostiquer">diagnostiquer</span>&nbsp;<span class="word" data-key="les">les</span>&nbsp;<span class="word" data-key="maladies">maladies</span>&nbsp;<span class="word" data-key="plus">plus</span>&nbsp;<span class="word" data-key="rapidement">rapidement</span>.
+      </div>
+      <div class="sentence-kr">의사는 AI를 사용하여 질병을 더 빠르게 진단할 수 있다.</div>
+      <div class="sentence-pron">엉 메드쌩 뻬 윌리제 리아 뿌흐 디아뇨스티케 레 말라디 플뤼 하피드망.</div>
+    </div>
+  </div>
+
+  <div class="click-hint">☝ 밑줄 친 단어 클릭 — 분석 팝업</div>
+
+  <div class="divider"></div>
+
+  <!-- Grammar -->
+  <div class="section-label">문법 포인트</div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">1. 조동사 (Verbes modaux) — pouvoir, vouloir, devoir</div>
+    <div class="grammar-body">
+      영어의 can / want to / must 에 해당하는 프랑스어 조동사. <strong>뒤에 항상 동사 원형(infinitif)</strong>이 온다.
+      <div class="modal-grid">
+        <div class="modal-box">
+          <div class="modal-verb">pouvoir</div>
+          <div class="modal-pron">[뿌부아흐]</div>
+          <div class="modal-kr">~할 수 있다<br>(can)</div>
+        </div>
+        <div class="modal-box">
+          <div class="modal-verb">vouloir</div>
+          <div class="modal-pron">[불루아흐]</div>
+          <div class="modal-kr">~하고 싶다<br>(want to)</div>
+        </div>
+        <div class="modal-box">
+          <div class="modal-verb">devoir</div>
+          <div class="modal-pron">[드부아흐]</div>
+          <div class="modal-kr">~해야 한다<br>(must)</div>
+        </div>
+      </div>
+
+      pouvoir 현재형 활용:
+      <table class="conj-table">
+        <tr><td>je</td><td>peux [쁘]</td></tr>
+        <tr><td>tu</td><td>peux [쁘]</td></tr>
+        <tr><td>il / elle</td><td>peut [뻬]</td></tr>
+        <tr><td>nous</td><td>pouvons [뿌봉]</td></tr>
+        <tr><td>vous</td><td>pouvez [뿌베]</td></tr>
+        <tr><td>ils / elles</td><td>peuvent [뻬브]</td></tr>
+      </table>
+
+      <div class="example-row">
+        <div class="example-fr">Un medecin peut utiliser l'IA.</div>
+        <div class="example-kr">의사는 AI를 사용할 수 있다. (pouvoir + utiliser)</div>
+      </div>
+      <div class="example-row">
+        <div class="example-fr">Je dois etudier le francais.</div>
+        <div class="example-kr">나는 프랑스어를 공부해야 한다. (devoir + etudier)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">2. pour + infinitif — 목적 표현 (~하기 위해)</div>
+    <div class="grammar-body">
+      영어 "in order to"에 해당. <strong>pour + 동사 원형</strong> 구조.
+
+      <div class="example-row">
+        <div class="example-fr">Les startups levent des fonds pour developper de nouveaux produits.</div>
+        <div class="example-kr">스타트업들이 새 제품을 <strong>개발하기 위해</strong> 자금을 조달한다.</div>
+      </div>
+      <div class="example-row">
+        <div class="example-fr">Un medecin utilise l'IA pour diagnostiquer les maladies.</div>
+        <div class="example-kr">의사가 질병을 <strong>진단하기 위해</strong> AI를 사용한다.</div>
+      </div>
+      <div class="example-row">
+        <div class="example-fr">J'etudie pour apprendre le francais.</div>
+        <div class="example-kr">나는 프랑스어를 <strong>배우기 위해</strong> 공부한다.</div>
+      </div>
+
+      <br>
+      pour + infinitif는 영어 to-infinitive와 같은 역할이라 이미 직관적으로 느껴질 거야.
+    </div>
+  </div>
+
+  <div class="grammar-card">
+    <div class="grammar-title">3. 부사 만들기 — 형용사 + ment</div>
+    <div class="grammar-body">
+      영어의 -ly 처럼 프랑스어는 형용사에 <strong>-ment</strong>를 붙여 부사를 만들어.
+      <br><br>
+      기본 규칙: 여성형 형용사 + ment
+
+      <div class="adverb-grid">
+        <div class="adverb-item">
+          <div><span class="adverb-adj">rapide</span> → <span class="adverb-adv">rapidement</span></div>
+          <div class="adverb-kr">빠른 → 빠르게</div>
+        </div>
+        <div class="adverb-item">
+          <div><span class="adverb-adj">lent(e)</span> → <span class="adverb-adv">lentement</span></div>
+          <div class="adverb-kr">느린 → 느리게</div>
+        </div>
+        <div class="adverb-item">
+          <div><span class="adverb-adj">facile</span> → <span class="adverb-adv">facilement</span></div>
+          <div class="adverb-kr">쉬운 → 쉽게</div>
+        </div>
+        <div class="adverb-item">
+          <div><span class="adverb-adj">serieux/serieuse</span> → <span class="adverb-adv">serieusement</span></div>
+          <div class="adverb-kr">진지한 → 진지하게</div>
+        </div>
+      </div>
+
+      비교급: <span class="fr">plus + 부사</span> = 더 ~하게
+      <div class="example-row">
+        <div class="example-fr">diagnostiquer les maladies plus rapidement</div>
+        <div class="example-kr">질병을 더 빠르게 진단하다</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Vocab -->
+  <div class="section-label">기술 / 의학 어휘 (A2)</div>
+  <div class="vocab-grid">
+    <div class="vocab-item">
+      <div class="vocab-fr">l'intelligence artificielle</div>
+      <div class="vocab-pron">[랭텔리정스 아흐티피씨엘]</div>
+      <div class="vocab-kr">인공지능 (AI)</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">la startup</div>
+      <div class="vocab-pron">[라 스타흐텁]</div>
+      <div class="vocab-kr">스타트업</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">lever des fonds</div>
+      <div class="vocab-pron">[르베 데 퐁]</div>
+      <div class="vocab-kr">자금을 조달하다</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">developper</div>
+      <div class="vocab-pron">[데블로뻬]</div>
+      <div class="vocab-kr">개발하다</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">un medecin</div>
+      <div class="vocab-pron">[엉 메드쌩]</div>
+      <div class="vocab-kr">의사</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">diagnostiquer</div>
+      <div class="vocab-pron">[디아뇨스티케]</div>
+      <div class="vocab-kr">진단하다</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">la maladie</div>
+      <div class="vocab-pron">[라 말라디]</div>
+      <div class="vocab-kr">질병</div>
+    </div>
+    <div class="vocab-item">
+      <div class="vocab-fr">transformer</div>
+      <div class="vocab-pron">[트랑스포흐메]</div>
+      <div class="vocab-kr">변화시키다, 변형하다</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Expression -->
+  <div class="section-label">오늘의 표현</div>
+  <div class="expr-box">
+    <div class="expr-main">Ca change tout !</div>
+    <div class="expr-pron">[싸 샹쥬 뚜]</div>
+    <div class="expr-meaning">
+      그게 모든 것을 바꾼다! / 완전 달라지는 거야!<br><br>
+      ca = cela (그것). changer = 바꾸다. tout = 모든 것.<br>
+      일상에서 "게임 체인저다!" 같은 뉘앙스로 많이 써.
+    </div>
+    <div class="expr-usage">
+      L'IA ? Ca change tout dans la medecine.<br>
+      (AI요? 의학에서 모든 걸 바꾸고 있어요.)<br><br>
+      Ca ne change rien. [싸 느 샹쥬 히엥] = 아무것도 안 바뀌는 거야.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Quiz -->
+  <div class="section-label">미니 퀴즈</div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">1. "의사들은 더 빠르게 진단할 수 있다"를 프랑스어로?</div>
+    <div class="quiz-hint">힌트: Les medecins, pouvoir, diagnostiquer, plus rapidement</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">Les medecins peuvent diagnostiquer plus rapidement.</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">2. "나는 프랑스어를 배우기 위해 공부한다"를 프랑스어로?</div>
+    <div class="quiz-hint">힌트: j'etudie, pour, apprendre, le francais</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">J'etudie pour apprendre le francais.</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">3. "serieux(진지한)"의 부사형은? 그리고 "더 진지하게"는?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">serieusement — plus serieusement<br>(여성형 serieuse + ment = serieusement)</div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">4. "Je dois finir ce projet" — 무슨 뜻이야? devoir의 역할은?</div>
+    <div class="answer-toggle" onclick="toggle(this)">▶ 정답 보기</div>
+    <div class="answer-text">나는 이 프로젝트를 끝내야 한다.<br>devoir = must / have to. devoir + infinitif 구조.</div>
+  </div>
+
+  <div class="culture-note">
+    🤖 <strong>문화 포인트</strong> — 프랑스는 AI 분야에서 유럽 최강국 중 하나야. Mistral AI가 파리 스타트업으로 2023년 창업해 유럽 최고 평가를 받는 LLM 회사가 됐어. 프랑스 정부도 "la souverainete numerique (디지털 주권)"을 강조하며 자국 AI 기술에 대규모 투자 중. 수의학 AI도 빠르게 성장 중인 분야야 — 영상 진단, 질병 예측 모델 등이 실제로 쓰이고 있어.
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tip-word" id="tw"></div>
+  <div class="tip-pron" id="tp"></div>
+  <div class="tip-kr" id="tk"></div>
+  <div class="tip-grammar" id="tg"></div>
+  <div class="tip-memo" id="tm"></div>
+</div>
+
+<script>
+const data = {
+  Lintelligence: { pron:"[랭텔리정스] / [ɛ̃tɛliʒɑ̃s]", kr:"지능, 인텔리전스", grammar:"여성 명사 — l'intelligence (모음 앞 le/la → l')", memo:"영어 intelligence와 동일 어원. 앞에 l'가 붙는 건 모음 앞 축약 규칙" },
+  artificielle: { pron:"[아흐티피씨엘] / [aʁtifisjɛl]", kr:"인공적인 (artificial)", grammar:"형용사 여성형 — artificiel(남성) → artificielle(여성)", memo:"여성형에 -le 추가. intelligence가 여성 명사라서 여성형 형용사 사용" },
+  transforme: { pron:"[트랑스포흠] / [tʁɑ̃sfɔʁm]", kr:"변화시킨다", grammar:"transformer 동사 3인칭 단수 현재형", memo:"영어 transform과 동일. -er 동사 현재형: je transforme, il transforme" },
+  notre: { pron:"[노트흐] / [nɔtʁ]", kr:"우리의 (our)", grammar:"1인칭 복수 소유형용사", memo:"mon/ma(나의) → notre(우리의). nos = 우리의(복수 명사 앞)" },
+  societe: { pron:"[소씨에테] / [sɔsjete]", kr:"사회, 회사", grammar:"여성 명사", memo:"영어 society와 동일 어원. la societe = 사회 / une societe = 회사(기업)" },
+  Les: { pron:"[레] / [le]", kr:"그 (복수)", grammar:"복수 정관사 (남성/여성 구분 없음)", memo:"단수 le/la → 복수 les. startups는 복수이므로 les" },
+  startups: { pron:"[스타흐텁] / [staʁtœp]", kr:"스타트업들", grammar:"여성 명사 복수 (영어 차용어)", memo:"프랑스어도 startup을 그대로 씀. les startups, une startup" },
+  levent: { pron:"[르브] / [lɛv]", kr:"조달한다, 올린다", grammar:"lever 동사 3인칭 복수 현재형", memo:"lever = 올리다, 조달하다. lever des fonds = 자금을 조달하다 (fundraising)" },
+  des: { pron:"[데] / [de]", kr:"몇몇, (복수 부정관사)", grammar:"복수 부정관사 (un/une의 복수형)", memo:"un fonds(하나의 펀드) → des fonds(펀드들/자금). 셀 수 없을 땐 그냥 des" },
+  fonds: { pron:"[퐁] / [fɔ̃]", kr:"자금, 펀드", grammar:"남성 복수 명사", memo:"lever des fonds = fundraising. le fonds = 기금. fonds souverain = 국부펀드" },
+  pour: { pron:"[뿌흐] / [puʁ]", kr:"~을 위해, ~하기 위해", grammar:"전치사 / pour + infinitif = 목적 표현", memo:"pour + 동사원형 = in order to. 영어 for와 비슷하지만 목적 표현엔 pour만" },
+  developper: { pron:"[데블로뻬] / [devlɔpe]", kr:"개발하다", grammar:"동사 원형 (infinitif) — pour 뒤라서", memo:"영어 develop과 동일 어원. double p 주의. developpement = 개발(명사)" },
+  de: { pron:"[드] / [də]", kr:"~의, 몇몇의", grammar:"부정관사 복수 de (부정문/형용사 앞에서)", memo:"nouveaux(새로운)라는 형용사가 명사 앞에 오면 des → de로 변함" },
+  nouveaux: { pron:"[누보] / [nuvo]", kr:"새로운 (복수)", grammar:"형용사 nouveau의 남성 복수형", memo:"nouveau(남단) → nouveaux(남복) → nouvelle(여단) → nouvelles(여복). BAGS 형용사라 명사 앞" },
+  produits: { pron:"[프호뒤] / [pʁodɥi]", kr:"제품들", grammar:"남성 복수 명사", grammar2:"produire 동사의 과거분사이기도 함", memo:"un produit = a product. 영어 product와 동일 어원. t는 묵음" },
+  Un: { pron:"[엉] / [œ̃]", kr:"한 명의, 한 (부정관사 남성)", grammar:"남성 부정관사 단수", memo:"medecin이 남성 명사라서 un medecin. 여의사는 une medecin 또는 une femme medecin" },
+  medecin: { pron:"[메드쌩] / [mɛdsɛ̃]", kr:"의사", grammar:"남성 명사 (직업)", memo:"la medecine = 의학(학문). un medecin = 의사(직업인). 수의사는 un veterinaire [베테히네흐]" },
+  peut: { pron:"[뻬] / [pø]", kr:"할 수 있다 (can)", grammar:"pouvoir 동사 3인칭 단수 현재", memo:"je/tu peux, il peut. 뒤에 동사 원형. Un medecin peut utiliser = 의사는 사용할 수 있다" },
+  utiliser: { pron:"[윌리제] / [ytilize]", kr:"사용하다", grammar:"동사 원형 (pouvoir 뒤)", memo:"영어 utilize와 동일 어원. usage, utile도 같은 어원" },
+  lIA: { pron:"[리아] / [ia]", kr:"AI, 인공지능", grammar:"l'IA — intelligence artificielle의 약자, 여성", memo:"모음으로 시작하니 la → l'. 프랑스어에서도 l'IA, l'intelligence artificielle 둘 다 써" },
+  pour2: { pron:"[뿌흐] / [puʁ]", kr:"~하기 위해", grammar:"pour + infinitif = 목적", memo:"pour diagnostiquer = 진단하기 위해. 주어와 목적 주어가 같을 때 사용" },
+  diagnostiquer: { pron:"[디아뇨스티케] / [djagnostike]", kr:"진단하다", grammar:"동사 원형 (pour 뒤)", memo:"영어 diagnose + 프랑스어 -er 동사 어미. diagnostic(진단, 명사)와 같은 어원" },
+  les: { pron:"[레] / [le]", kr:"그 (복수)", grammar:"복수 정관사", memo:"les maladies = 질병들 (일반적인 개념). 영어 diseases에 해당" },
+  maladies: { pron:"[말라디] / [maladi]", kr:"질병들", grammar:"여성 복수 명사", memo:"la maladie = 질병. malade = 아픈(형용사). Je suis malade = 나는 아파" },
+  plus: { pron:"[플뤼] / [ply]", kr:"더 (비교급)", grammar:"비교급 부사 — plus + 형용사/부사", memo:"plus rapidement = more quickly. plus...que = ~보다 더. le plus = 가장(최상급)" },
+  rapidement: { pron:"[하피드망] / [ʁapidmɑ̃]", kr:"빠르게", grammar:"부사 — rapide(빠른) + ment", memo:"rapide → rapidement. -ment는 영어 -ly와 같은 역할. 끝 -t 묵음" }
+};
+
+const tip = document.getElementById('tooltip');
+
+function showTip(el, key) {
+  const d = data[key]; if (!d) return;
+  document.getElementById('tw').textContent = el.textContent.trim();
+  document.getElementById('tp').textContent = d.pron;
+  document.getElementById('tk').textContent = d.kr;
+  document.getElementById('tg').textContent = d.grammar;
+  document.getElementById('tm').textContent = d.memo;
+  const r = el.getBoundingClientRect();
+  let top = r.bottom + 8 + window.scrollY;
+  let left = r.left + window.scrollX;
+  if (left + 296 > window.innerWidth - 8) left = window.innerWidth - 304;
+  if (top + 220 > window.scrollY + window.innerHeight) top = r.top + window.scrollY - 230;
+  tip.style.top = Math.max(8, top) + 'px';
+  tip.style.left = Math.max(8, left) + 'px';
+  tip.classList.add('visible');
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+  el.classList.add('active');
+}
+
+document.querySelectorAll('.word').forEach(el => {
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    if (el.classList.contains('active') && tip.classList.contains('visible')) {
+      tip.classList.remove('visible');
+      el.classList.remove('active');
+    } else {
+      showTip(el, el.dataset.key);
+    }
+  });
+});
+
+document.addEventListener('click', () => {
+  tip.classList.remove('visible');
+  document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
+});
+
+function toggle(btn) {
+  const ans = btn.nextElementSibling;
+  const open = ans.style.display === 'block';
+  ans.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? '▶ 정답 보기' : '▼ 정답 숨기기';
+}
+</script>
+</body>
+</html>
