@@ -40,7 +40,7 @@
   .bubble-meta { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: var(--muted); padding: 0 14px; }
   .bubble { border-radius: 4px 16px 16px 16px; padding: 14px 18px; border-left: 3px solid var(--burgundy); background: #EDF1F9; }
   .bubble.server { border-left-color: var(--gold); background: #F0EAE2; }
-  .bubble-french { font-family: 'Playfair Display', serif; font-size: 17px; line-height: 1.7; margin-bottom: 6px; }
+  .bubble-french { overflow-wrap: break-word; word-break: break-word; font-family: 'Playfair Display', serif; font-size: 17px; line-height: 1.7; margin-bottom: 6px; }
   .bubble-korean { font-size: 13px; color: var(--muted); font-weight: 300; }
   .bubble-pron { font-size: 12px; color: var(--burgundy); font-family: 'Crimson Pro', serif; margin-top: 3px; }
   .click-hint { text-align: center; font-size: 12px; color: var(--muted); margin-top: 10px; font-family: 'Crimson Pro', serif; }
@@ -146,7 +146,7 @@
       <div class="bubble-meta">👨 종업원 (Serveur)</div>
       <div class="bubble server">
         <div class="bubble-french">
-          <span class="word" data-key="Bonsoir">Bonsoir</span>&nbsp;!&nbsp;<span class="word" data-key="Vous">Vous</span>&nbsp;<span class="word" data-key="avez">avez</span>&nbsp;<span class="word" data-key="reserve">reserve</span>&nbsp;?
+          <span class="word" data-key="Bonsoir">Bonsoir</span>&nbsp;!&nbsp;<span class="word" data-key="Vous">Vous</span> <span class="word" data-key="avez">avez</span> <span class="word" data-key="reserve">reserve</span>&nbsp;?
         </div>
         <div class="bubble-korean">안녕하세요! 예약하셨나요?</div>
         <div class="bubble-pron">봉수아르! 부 자베 헤제흐베?</div>
@@ -157,7 +157,7 @@
       <div class="bubble-meta">🧑 손님 (Client)</div>
       <div class="bubble">
         <div class="bubble-french">
-          <span class="word" data-key="Non">Non</span>,&nbsp;<span class="word" data-key="nous">nous</span>&nbsp;<span class="word" data-key="navons">n'avons</span>&nbsp;<span class="word" data-key="pas">pas</span>&nbsp;<span class="word" data-key="reserve">reserve</span>.&nbsp;<span class="word" data-key="Cest">C'est</span>&nbsp;<span class="word" data-key="pour">pour</span>&nbsp;<span class="word" data-key="deux">deux</span>&nbsp;<span class="word" data-key="personnes">personnes</span>.
+          <span class="word" data-key="Non">Non</span>,&nbsp;<span class="word" data-key="nous">nous</span> <span class="word" data-key="navons">n'avons</span> <span class="word" data-key="pas">pas</span> <span class="word" data-key="reserve">reserve</span>.&nbsp;<span class="word" data-key="Cest">C'est</span> <span class="word" data-key="pour">pour</span> <span class="word" data-key="deux">deux</span> <span class="word" data-key="personnes">personnes</span>.
         </div>
         <div class="bubble-korean">아니요, 예약을 안 했어요. 두 명이에요.</div>
         <div class="bubble-pron">농, 누 나봉 파 헤제흐베. 쎄 뿌흐 두 페흐손.</div>
@@ -168,8 +168,8 @@
       <div class="bubble-meta">👨 종업원 (Serveur)</div>
       <div class="bubble server">
         <div class="bubble-french">
-          <span class="word" data-key="Bien">Bien</span>&nbsp;<span class="word" data-key="sur">sur</span>&nbsp;!&nbsp;
-          <span class="word" data-key="Voici">Voici</span>&nbsp;<span class="word" data-key="la2">la</span>&nbsp;<span class="word" data-key="carte">carte</span>.
+          <span class="word" data-key="Bien">Bien</span> <span class="word" data-key="sur">sur</span>&nbsp;!&nbsp;
+          <span class="word" data-key="Voici">Voici</span> <span class="word" data-key="la2">la</span> <span class="word" data-key="carte">carte</span>.
         </div>
         <div class="bubble-korean">물론이죠! 메뉴판 여기 있습니다.</div>
         <div class="bubble-pron">비엥 쒸흐! 부아씨 라 카흐트.</div>
@@ -180,8 +180,8 @@
       <div class="bubble-meta">🧑 손님 (Client)</div>
       <div class="bubble">
         <div class="bubble-french">
-          <span class="word" data-key="Je">Je</span>&nbsp;<span class="word" data-key="voudrais">voudrais</span>&nbsp;<span class="word" data-key="du">du</span>&nbsp;<span class="word" data-key="boeuf">boeuf</span>&nbsp;
-          <span class="word" data-key="et">et</span>&nbsp;<span class="word" data-key="de">de</span>&nbsp;<span class="word" data-key="la">la</span>&nbsp;<span class="word" data-key="soupe">soupe</span>&nbsp;<span class="word" data-key="sil">s'il</span>&nbsp;<span class="word" data-key="vous">vous</span>&nbsp;<span class="word" data-key="plait">plait</span>.
+          <span class="word" data-key="Je">Je</span> <span class="word" data-key="voudrais">voudrais</span> <span class="word" data-key="du">du</span> <span class="word" data-key="boeuf">boeuf</span>&nbsp;
+          <span class="word" data-key="et">et</span> <span class="word" data-key="de">de</span> <span class="word" data-key="la">la</span> <span class="word" data-key="soupe">soupe</span> <span class="word" data-key="sil">s'il</span> <span class="word" data-key="vous">vous</span> <span class="word" data-key="plait">plait</span>.
         </div>
         <div class="bubble-korean">소고기와 수프 주세요.</div>
         <div class="bubble-pron">주 부드헤 뒤 뵈프 에 드 라 숩, 실 부 플레.</div>
